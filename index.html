@@ -1,0 +1,85 @@
+<div id="phase_app_canvas">
+  <script>
+  var speed_of_light= 299792458;
+  function contentID(my_content,my_id){document.getElementById(my_id).innerHTML=my_content;}
+  function result_RC_Distance(freq,angle_deg){
+  let c=299792458;
+  let rc=(angle_deg/360)*(c/freq);
+  let mag_jwcr_plus_one = Math.sqrt((4*Math.PI*Math.PI*freq*freq*rc*rc)+1);
+  let lpfgainconstant=1/mag_jwcr_plus_one;
+  let hpfgainconstant=(2*Math.PI*freq*rc)/mag_jwcr_plus_one;
+  let hpfgaindb=10*Math.log10(hpfgainconstant);
+  let lpfgaindb=10*Math.log10(lpfgainconstant);
+  let lpfgainstring=lpfgainconstant+" or "+lpfgaindb+"dB";
+  let hpfgainstring=hpfgainconstant+" or "+hpfgaindb+"dB";
+  let wavelength=c/freq;
+  let distance=wavelength*(angle_deg/360);
+  if(isNaN(rc)){
+    contentID("Invalid input!!","error");
+    return "";
+  }
+  else{
+    contentID("","error");
+    return "RC="+rc+"s, <br>distance="+distance+"m"+"<br>Passive LPF Voltage Gain="+lpfgainstring+"<br> Passive HPF Voltage Gain="+hpfgainstring;}
+  }/*end*/
+  function phase_app_main(){
+  let frequency=0;
+  let userinput=document.getElementById("myfrequency").value;
+  let is_frequency_set=0;
+  if(userinput.includes("G")){frequency=parseFloat(userinput.split("G")[0])*1000000000;is_frequency_set=1;}/*GHz*/
+  if(userinput.includes("g")){frequency=parseFloat(userinput.split("g")[0])*1000000000;is_frequency_set=1;}/*GHz*/
+  if(userinput.includes("M")){frequency=parseFloat(userinput.split("M")[0])*1000000;   is_frequency_set=1;}/*MHz*/
+  if(userinput.includes("m")){frequency=parseFloat(userinput.split("m")[0])*1000000;   is_frequency_set=1;}/*MHz*/
+  if(userinput.includes("K")){frequency=parseFloat(userinput.split("K")[0])*1000;      is_frequency_set=1;}/*KHz*/
+  if(userinput.includes("k")){frequency=parseFloat(userinput.split("k")[0])*1000;      is_frequency_set=1;}/*KHz*/
+  if(is_frequency_set==0){frequency=parseFloat(userinput);}
+  let mywavelength=speed_of_light/frequency;
+  (isNaN(mywavelength)) ? contentID("","wavelength"):contentID(mywavelength+"m","wavelength");
+  /*contentID(mywavelength+"m","wavelength");*/
+  contentID(result_RC_Distance(frequency,45),"rc45deg");
+  contentID(result_RC_Distance(frequency,15),"rc15deg");
+  contentID(result_RC_Distance(frequency,30),"rc30deg");
+  contentID(result_RC_Distance(frequency,60),"rc60deg");
+  contentID(result_RC_Distance(frequency,90),"rc90deg");
+  contentID("Displayed results for input: "+frequency,"lastinput");
+  }/*end*/
+  </script>
+  <style>
+    .inputsection{margin:6px;width:60vw;border-radius: 5px;border: 2px solid #73AD21;}
+    .resultsection{margin:6px;width:60vw;border-radius: 5px;border: 2px solid #73AD21;}
+    .title1{font-size:28px;}
+    .title2{font-size:22px;}
+  </style>
+  <div class="inputsection">
+  <label class="title1">Frequency </label>
+  <input id="myfrequency" type="text">
+  <input type="button" value="Calculate" onclick="phase_app_main()">
+  <div id="lastinput"></div>
+  <div id="error"></div>
+  </div>
+  <div class="resultsection">
+  <div class="title2">Wavelength</div>
+  <div id="wavelength"></div>
+  </div>
+  <div class="resultsection">
+  <div class="title2">RC(45&deg)/Timeconstant</div>
+  <div id="rc45deg"></div>
+  </div>
+  <div class="resultsection">
+  <div class="title2">15&deg Phase</div>
+  <div id="rc15deg"></div>
+  </div>
+  <div class="resultsection">
+  <div class="title2">30&deg Phase</div>
+  <div id="rc30deg"></div>
+  </div>
+  <div class="resultsection">
+  <div class="title2">60&deg Phase</div>
+  <div id="rc60deg"></div>
+  </div>
+  <div class="resultsection">
+  <div class="title2">90&deg Phase</div>
+  <div id="rc90deg"></div>
+  </div>
+<div>Brian Oure</div>
+</div>
